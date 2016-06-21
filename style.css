@@ -1,0 +1,59 @@
+div.well {
+  margin-top: 20px;
+}
+
+li {
+  margin: 10px 0;
+  transition: box-shadow 0.5s;
+}
+
+li:hover {
+  box-shadow: 4px 2px 20px rgba(0,0,0, .2);
+}
+
+div.container input {
+  font-size: 1.2em;
+}
+
+input#textField {
+  font-weight: bold;
+  padding: 20px;
+}
+
+li.list-group-item > input {
+  padding-left: 35px;
+}
+
+li.list-group-item > input[disabled] {
+  background: white;
+  cursor: default;
+}
+
+li.list-group-item > input.crossed {
+  text-decoration: line-through;
+  background: #efe;
+}
+
+li > span[class*=check] {
+  position: absolute;
+  top: 17px;
+  left: 25px;
+  font-size: 1.3em;
+}
+
+li > span[class$=check] {
+  color: green;
+}
+
+li > span[class$=circle] {
+  position: absolute;
+  top: 17px;
+  right: 25px;
+  font-size: 1.3em;
+  color: red;
+  display: none;
+}
+
+button.btn-primary {
+  float: right;
+}
