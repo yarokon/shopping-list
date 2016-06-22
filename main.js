@@ -23,17 +23,19 @@ $(document).ready(function() {
 
   $('#deleteButton').click(function() {
     $('li > span:first-child').each(function() {
-
       if ($(this).hasClass('glyphicon-check')) {
-        $(this).parent().remove();
+        $(this).parent().animate({left: '100%', opacity: '0'}, 800, function() {
+          $(this).slideUp('slow', function() {
+            $(this).remove();
+            if (!$('ul').children().html()) {
+              id = 0;
+            }
+
+            saveData();
+          });
+        });
       }
     });
-
-    if (!$('ul').children().html()) {
-      id = 0;
-    }
-
-    saveData();
   });
 
   $('#checkButton').click(function(){
@@ -118,7 +120,10 @@ $(document).ready(function() {
       switch(e.which){
         case 13:
           if (!$(this).val().trim()) {
-            $(this).parent().remove();
+              $(this).parent().slideUp(400 , function(){
+                $(this).remove();
+                saveData();
+            });
           }
           $(this).attr('disabled', true);
           saveData();
@@ -140,11 +145,10 @@ $(document).ready(function() {
     });
 
     lastSpan.click(function(){
-      $(this).parent().slideUp('normal', function(){
+      $(this).parent().slideUp(400 , function(){
         $(this).remove();
+        saveData();
       });
-      
-      saveData();
     });
 
     listItem.hover(
