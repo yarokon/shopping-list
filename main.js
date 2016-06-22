@@ -1,34 +1,39 @@
 $(document).ready(function() {
   'use strict';
 
-  var id = -1;
+  var id = 0;
 
   function nextId() {
-    return 'id' + (++id);
+    return 'id' + id++;
   }
 
   $('#textField').keyup(function(e) {
-    var food;
+    var article;
     if (e.which === 13) {
-      food = $(this).val();
+      article = $(this).val().trim();
 
-      if (food) {
+      if (article) {
         $(this).val('');
-        insertFood(food);
+        insertGoods(article);
       } 
+
+    saveData();
     }
   });
 
   $('#deleteButton').click(function() {
     $('li > span:first-child').each(function() {
+
       if ($(this).hasClass('glyphicon-check')) {
         $(this).parent().remove();
       }
     });
 
     if (!$('ul').children().html()) {
-      id = -1;
+      id = 0;
     }
+
+    saveData();
   });
 
   $('#checkButton').click(function(){
@@ -55,12 +60,12 @@ $(document).ready(function() {
     }
 
     $(this).attr('data-checked', !allCheck);
+
+    saveData();
   });
 
-  function insertFood(value, isChecked) {
+  function insertGoods(value, isChecked) {
     var listItem, checkboxItem, inputItem, removeItem;
-
-    isChecked = false || isChecked;
 
     inputItem = $('<input>').attr({
       type: 'text',
@@ -85,75 +90,96 @@ $(document).ready(function() {
     }
 
     listItem.append(checkboxItem, inputItem, removeItem);
-    bindEvent(listItem);
+    bindListeners(listItem);
     $('ul').prepend(listItem);
+    $(listItem).slideUp(0, function(){
+        $(this).slideDown();
+    });
   }
 
-  function bindEvent(item) {
-    var temp;
+  function bindListeners(listItem) {
+    var tempValue;
+    var firstSpan = listItem.children('span:first');
+    var lastSpan = listItem.children('span:last');
+    listItem = $(listItem);
 
-    $(item).dblclick(function(){
-      var inputItem = $(this).children('input');
+    listItem.dblclick(function(){
+      var inputItem = listItem.children('input');
 
-      if ($(this).children('span:first').hasClass('glyphicon-unchecked')) {
+      if (firstSpan.hasClass('glyphicon-unchecked')) {
         $(inputItem).attr('disabled', false);
-        temp = $(inputItem).val();
+        tempValue = $(inputItem).val();
       }
 
       inputItem.focus();
     });
 
-    $(item).children('input').keyup(function(e) {
+    listItem.children('input').keyup(function(e) {
       switch(e.which){
         case 13:
+          if (!$(this).val().trim()) {
+            $(this).parent().remove();
+          }
           $(this).attr('disabled', true);
+          saveData();
           break;
         case 27:
-          $(this).val(temp);
+          $(this).val(tempValue);
           $(this).attr('disabled', true);
       }
     });
 
-    $(item).children('span:first').click(function(){
-      $(this).next().toggleClass('crossed');
-      $(this).toggleClass('glyphicon-check glyphicon-unchecked');
+    listItem.children('input').blur(function(){
+      $(this).attr('disabled', true);
     });
 
-    $(item).children('span:last').click(function(){
-      $(this).parent().remove();
+    firstSpan.click(function(){
+      firstSpan.next().toggleClass('crossed');
+      firstSpan.toggleClass('glyphicon-check glyphicon-unchecked');
+      saveData();
     });
 
-    $(item).hover(
+    lastSpan.click(function(){
+      $(this).parent().slideUp('normal', function(){
+        $(this).remove();
+      });
+      
+      saveData();
+    });
+
+    listItem.hover(
     function(){
-      $(this).children('span:last').css('display', 'block');
+      lastSpan.css('display', 'block');
     },
     function(){
-      $(this).children('span:last').css('display', 'none');
+      lastSpan.css('display', 'none');
     });
   }
 
-  function saveData() {
+  function prepareData() {
     var value, isChecked;
+    var itemData = {};
     var localData = [];
 
     $('li').each(function() {
-      value = $(this).children('input').val();
-      isChecked = $(this).children('span:first').hasClass('glyphicon-check');
+      itemData = {};
+      itemData.article = $(this).children('input').val();
+      itemData.isChecked = $(this).children('span:first').hasClass('glyphicon-check');
 
-      localData.push([value, isChecked]);
+      localData.push(itemData);
     });
 
     return localData.reverse();
   }
 
-  $(window).unload(function() {
-    localStorage.data = JSON.stringify(saveData());
-  });
+  function saveData() {
+    localStorage.data = JSON.stringify(prepareData());
+  }
 
   $(window).load(function() {
     var localData = JSON.parse(localStorage.data);
-    localData.forEach(function(item) {
-      insertFood(item[0], item[1]);
+    localData.forEach(function(itemData) {
+      insertGoods(itemData.article, itemData.isChecked);
     });
   });
 });
