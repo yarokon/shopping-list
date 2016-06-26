@@ -17,7 +17,8 @@ div.container input {
 
 input#textField {
   font-weight: bold;
-  padding: 20px;
+  padding: 10px 50px;
+  height:45px;
 }
 
 li.list-group-item > input {
@@ -39,6 +40,7 @@ li > span[class*=check] {
   top: 17px;
   left: 25px;
   font-size: 1.3em;
+  cursor: pointer;
 }
 
 li > span[class$=check] {
@@ -52,6 +54,7 @@ li > span[class$=circle] {
   font-size: 1.3em;
   color: red;
   display: none;
+  cursor: pointer;
 }
 
 button.btn-primary {

@@ -177,13 +177,15 @@ $(document).ready(function() {
   }
 
   function saveData() {
-    localStorage.data = JSON.stringify(prepareData());
+    localStorage.setItem('data', JSON.stringify(prepareData()));
   }
 
   $(window).load(function() {
-    var localData = JSON.parse(localStorage.data);
-    localData.forEach(function(itemData) {
-      insertGoods(itemData.article, itemData.isChecked);
-    });
+    var localData = JSON.parse(localStorage.getItem('data'));
+    if (localData) {
+      localData.forEach(function(itemData) {
+        insertGoods(itemData.article, itemData.isChecked);
+      });
+    }
   });
 });
